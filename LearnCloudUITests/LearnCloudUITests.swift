@@ -27,9 +27,9 @@ class LearnCloudUITests: XCTestCase {
         super.tearDown()
     }
     
-    func testExample() {
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func test_onLaunch_userIsGreeted() {
+        let app = XCUIApplication()
+        let entryText = app.staticTexts["Welcome Cloud Computing!"]
+        XCTAssertTrue(entryText.exists)
     }
-    
 }
