@@ -24,3 +24,5 @@ DerivedData/
 
 fastlane/report.xml
 fastlane/Readme.md
+
+aws-tmp/*
