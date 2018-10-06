@@ -18,8 +18,6 @@ default_platform(:ios)
 platform :ios do
   desc 'Runs tests in AWS DeviceFarm'
   lane :test_in_aws_devicefarm do
-    run_started = Time.now.to_i.to_s
-
     xcodebuild(
       scheme: 'UITests',
       destination: 'generic/platform=iOS',
@@ -33,19 +31,30 @@ platform :ios do
       configuration: 'Release'
     )
 
-    # queued_message = send_message_to_sqs(
-    #   queue_name: 'LearnCloud-Devicefarm-Listener',
-    #   message_body: 'DeviceFarmRunInProcess',
-    #   message_attributes: {
-    #     'RunArn' => {
-    #       string_value: 'arn:aws:devicefarm:us-west-2:125325355814:run:1106f40e-69a9-42b4-858c-40ecbe6d816d/185f6541-13c8-4345-80c6-d41a1b4ee679',
-    #       data_type: 'String'
-    #     },
-    #     'RunStarted' => {
-    #       string_value: run_started,
-    #       data_type: 'Number'
-    #     }
-    #   }
-    # )
+    ENV['AWS_REGION'] = 'us-west-2'
+    scheduled_run = aws_device_farm(
+      name: 'LearnCloud',
+      device_pool: 'Single Device X',
+      allow_failed_tests: true,
+      allow_device_errors: true,
+      wait_for_completion: false
+    )
+
+    run_started = Time.now.to_i.to_s
+    ENV['AWS_REGION'] = 'eu-central-1'
+    send_message_to_sqs(
+      queue_name: 'LearnCloud-Devicefarm-Listener',
+      message_body: 'DeviceFarmRunInProcess',
+      message_attributes: {
+        'RunArn' => {
+          string_value: scheduled_run.arn,
+          data_type: 'String'
+        },
+        'RunStarted' => {
+          string_value: run_started,
+          data_type: 'Number'
+        }
+      }
+    )
   end
 end
