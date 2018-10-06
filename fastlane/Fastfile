@@ -16,8 +16,22 @@
 default_platform(:ios)
 
 platform :ios do
-  desc "Description of what the lane does"
-  lane :custom_lane do
-    # add actions here: https://docs.fastlane.tools/actions
+  desc 'Runs tests in AWS DeviceFarm'
+  lane :test_in_aws_devicefarm do
+    run_started = Time.now.to_i.to_s
+    send_message_to_sqs(
+      queue_name: 'LearnCloud-Devicefarm-Listener',
+      message_body: 'DeviceFarmRunInProcess',
+      message_attributes: {
+        'RunArn' => {
+          string_value: 'arn:aws:devicefarm:us-west-2:125325355814:run:1106f40e-69a9-42b4-858c-40ecbe6d816d/185f6541-13c8-4345-80c6-d41a1b4ee679',
+          data_type: 'String'
+        },
+        'RunStarted' => {
+          string_value: run_started,
+          data_type: 'Number'
+        }
+      }
+    )
   end
 end
