@@ -1,7 +1,6 @@
 GIT
-  remote: https://github.com/viktorasl/fastlane-plugin-aws_device_farm
+  remote: git@github.com:viktorasl/fastlane-plugin-aws_device_farm.git
   revision: 7e26ebc90efe013c0e49e74e6af07526d8279805
-  branch: master
   specs:
     fastlane-plugin-aws_device_farm (0.3.6)
       aws-sdk
